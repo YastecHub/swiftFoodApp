@@ -1,5 +1,6 @@
 import * as express from 'express';
 import * as mongoose from 'mongoose';
+import * as bodyParser from 'body-parser';
 import { getEnvironmentVariables } from './environments/environment';
 import UserRouter from './routers/UserRouter';
 
@@ -10,12 +11,12 @@ export class Server{
     constructor(){
         this.setConfigs();
         this.setRoute();
-        this.error404Handler();
         this.handleErrors();
     }
 
     setConfigs(){
         this.connectMongoDb();
+        this.configureBodyParser();
     }
 
     connectMongoDb(){
@@ -25,26 +26,23 @@ export class Server{
         });
     }
 
+    configureBodyParser(){
+        this.app.use(bodyParser.urlencoded({
+            extended: true
+        }));
+    }
+
     setRoute(){
         this.app.use('/api/user/', UserRouter)
     }
 
-    error404Handler(){
-        this.app.use((req, res) => {
-            res.status(404).json({
-                message: 'Not Found',
-                status_code: 404
-            });
-        })
-    }
-
-        handleErrors() {
-        this.app.use((error, req, res, next) => {
-            const errorStatus = req.errorStatus || 500;
-            res.status(errorStatus).json({
-                message: error.message || 'Something went wrong, Please try again',
-                status_code: errorStatus
-            });
+    handleErrors() {
+    this.app.use((error, req, res, next) => {
+        const errorStatus = req.errorStatus || 500;
+        res.status(errorStatus).json({
+            message: error.message || 'Something went wrong, Please try again',
+            status_code: errorStatus
         });
+    });
     }
 }
