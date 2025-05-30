@@ -1,38 +1,62 @@
 import User from "../models/User";
+import { Utils } from "../utils/utils";
 
 export class UserController{
-    static login(req, res, next) {
-        // const data = [{name: 'yastech'}];
-        // res.status(200).send(data);
-
-        // const error = new Error('User Email or password does not match');
-        // next(error);
-
-        // res.send(req.body);
+    static async signup(req, res, next) {
+        console.log(Utils.generateVerificationToken());
 
         const email = req.body.email;
+        const phone = req.body.phone;
         const password = req.body.password;
+        const name = req.body.name;
+        const type = req.body.type;
+        const status = req.body.status;
 
-        const user = new User({
+
+        const data ={
             email,
-            password
-        });
+            verification_token: Utils.generateVerificationToken(5),
+            verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
+            phone,
+            password,
+            name,
+            type,
+            status
+        };
 
-        user.save().then((user) => {
+        try {
+            let user = await new User(data).save();
+            //send email to user for verification
             res.send(user);
-        })
-        .catch(e => {
+        } catch (e) {
             next(e);
-        })
+        }
     }
 
-    static test(req, res, next){
-        console.log('test');
-        (req as any).msg = 'This is a Test';
-        next();
+    static async verify(req, res, next){
+       const verification_token = req.body.verification_token;
+       const email = req.body.email;
+       try {
+        const user = await User.findOneAndUpdate(
+        {
+            email: email,
+            verification_token: verification_token,
+            verification_token_time: {$gt: Date.now()}
+        },
+        {
+           email_verified: true
+        },
+        {
+            new: true
+        }
+    );
+        if (user) {
+           res.send(user);
+        }else{
+            throw new Error('Email verification Token is Expired.Please try again...')
+        }
+    } catch (e) {
+        next(e);
     }
-
-    static test2(req, res){
-       res.send((req as any).msg);
     }
 }
