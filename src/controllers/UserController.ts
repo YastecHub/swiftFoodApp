@@ -1,4 +1,5 @@
 import User from "../models/User";
+import { NodeMailer } from "../utils/NodeMailer";
 import { Utils } from "../utils/utils";
 
 export class UserController{
@@ -11,11 +12,12 @@ export class UserController{
         const name = req.body.name;
         const type = req.body.type;
         const status = req.body.status;
+        const verification_token = Utils.generateVerificationToken(5);
 
 
         const data ={
             email,
-            verification_token: Utils.generateVerificationToken(5),
+            verification_token,
             verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
             phone,
             password,
@@ -27,6 +29,11 @@ export class UserController{
         try {
             let user = await new User(data).save();
             //send email to user for verification
+            await NodeMailer.sendMail({
+                to: [email],
+                subject: 'test',
+                html: `<h1>Your Otp is ${verification_token}</h1>`
+            });
             res.send(user);
         } catch (e) {
             next(e);
@@ -49,14 +56,14 @@ export class UserController{
         {
             new: true
         }
-    );
+      );
         if (user) {
            res.send(user);
         }else{
             throw new Error('Email verification Token is Expired.Please try again...')
         }
-    } catch (e) {
+       } catch (e) {
         next(e);
-    }
+      }
     }
 }
