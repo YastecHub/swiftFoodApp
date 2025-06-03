@@ -4,7 +4,7 @@ import { Utils } from "../utils/utils";
 
 export class UserController{
     static async signup(req, res, next) {
-        console.log(Utils.generateVerificationToken());
+        console.log(Utils.generateVerificationToken(6));
 
         const email = req.body.email;
         const phone = req.body.phone;
@@ -12,7 +12,7 @@ export class UserController{
         const name = req.body.name;
         const type = req.body.type;
         const status = req.body.status;
-        const verification_token = Utils.generateVerificationToken(5);
+        const verification_token = Utils.generateVerificationToken(6);
 
 
         const data ={
@@ -29,12 +29,12 @@ export class UserController{
         try {
             let user = await new User(data).save();
             //send email to user for verification
+            res.send(user);
             await NodeMailer.sendMail({
                 to: [email],
-                subject: 'test',
+                subject: 'Email Verification',
                 html: `<h1>Your Otp is ${verification_token}</h1>`
-            });
-            res.send(user);
+            });         
         } catch (e) {
             next(e);
         }
@@ -65,5 +65,32 @@ export class UserController{
        } catch (e) {
         next(e);
       }
+    }
+
+    static async resendVerificationEmail(req, res, next){
+       const email = req.query.email;
+       const verification_token = Utils.generateVerificationToken();
+       
+       try {
+        const user = await User.findOneAndUpdate(
+        {  email: email },
+        {
+            verification_token: verification_token,
+            verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME
+        }
+      );
+        if (user) {
+            await NodeMailer.sendMail({
+                to: [user.email],
+                subject: 'Resend Email Verification',
+                html: `<h1>Your Otp is ${verification_token}</h1>`
+            });
+            res.json({success: true });
+        }else{
+            throw new Error('User doesn\'t exist')
+        }
+        } catch (e) {
+            next(e);
+        }
     }
 }

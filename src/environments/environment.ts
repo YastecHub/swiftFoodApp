@@ -3,11 +3,10 @@ import { ProdEnvironment } from "./environment.prod";
 
 export interface Environment{
     db_uri: string,
-    sendgrid_api_key?: string,
-    gmail_auth?: {
-        user: string,
-        pass: string
-    };
+    sendgrid?: {
+        api_key: string,
+        email_from: string
+    }
 }
 
 export function getEnvironmentVariables(){

@@ -7,14 +7,14 @@ export class NodeMailer{
         return nodeMailer.createTransport(
             SendGrid({
                 auth: {
-                    api_key: getEnvironmentVariables().sendgrid_api_key
+                    api_key: getEnvironmentVariables().sendgrid.api_key
                 }
         }));
     }
 
     static sendMail(data: {to: [string], subject: string, html: string}): Promise<any>{
        return  NodeMailer.initiateTransport().sendMail({
-            from: 'oladimejiyasir@gmail.com',
+            from: getEnvironmentVariables().sendgrid.email_from,
             to: data.to,
             subject: data.subject,
             html: data.html
