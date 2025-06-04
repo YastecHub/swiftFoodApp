@@ -40,4 +40,25 @@ export class UserValidators{
    static verifyUserForResendEmail(){
     return [query('email', 'Email is required').isEmail(),];
    }
+
+   static login(){
+    return [
+            query('email', 'Email is required').isEmail()
+                .custom((email, {req}) => {
+                    return User.findOne({
+                        email: email,
+                    }).then(user => {
+                        if (user) {
+                            req.user = user;
+                            return true;             
+                        }else {
+                            throw('No User Registered with such email, Please Register');
+                        }
+                    }).catch(e => {
+                        throw new Error(e);
+                    })
+                }),
+            query('password', 'Password is required').isAlphanumeric()
+    ]
+   } 
 }
