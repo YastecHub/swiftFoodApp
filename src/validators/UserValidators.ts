@@ -3,7 +3,7 @@ import User from "../models/User";
 
 export class UserValidators{
    static signup(){
-    return [
+        return [
             body('email', 'Email is required').isEmail()
                 .custom((email, {req}) => {
                     return User.findOne({
@@ -26,23 +26,18 @@ export class UserValidators{
             body('name', 'Name is required').isString(),
             body('type', 'User role type is required').isString(),
             body('status', 'User status is required').isString(),
-    ]
+        ]
    } 
 
 
-    static verifyUserEmail(){
-    return [
-        body('verification_token', 'Email verification token is required').isNumeric(),
-        body('email', 'Email is required').isEmail(),     
-    ]
+    static verifyUser(){
+        return [
+            body('verification_token', 'Email verification token is required').isNumeric(),
+        ]
    } 
-
-   static verifyUserForResendEmail(){
-    return [query('email', 'Email is required').isEmail(),];
-   }
 
    static login(){
-    return [
+        return [
             query('email', 'Email is required').isEmail()
                 .custom((email, {req}) => {
                     return User.findOne({
@@ -59,6 +54,6 @@ export class UserValidators{
                     })
                 }),
             query('password', 'Password is required').isAlphanumeric()
-    ]
-   } 
+        ]
+    } 
 }
