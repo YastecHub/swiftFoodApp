@@ -19,7 +19,7 @@ export class GlobalMiddleWare{
             req.errorStatus = 401;
             if (!token) throw new Error("JWT must be provided");
             const decoded = await Jwt.jwtVerify(token);
-            req.decoded = decoded;
+            req.user = decoded;
             next();
         } catch (e) {
             next(e)

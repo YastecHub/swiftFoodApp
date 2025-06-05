@@ -26,14 +26,14 @@ export class UserValidators{
             body('name', 'Name is required').isString(),
             body('type', 'User role type is required').isString(),
             body('status', 'User status is required').isString(),
-        ]
+        ];
    } 
 
 
     static verifyUser(){
         return [
             body('verification_token', 'Email verification token is required').isNumeric(),
-        ]
+        ];
    } 
 
    static login(){
@@ -54,6 +54,25 @@ export class UserValidators{
                     })
                 }),
             query('password', 'Password is required').isAlphanumeric()
-        ]
+        ];
     } 
+
+    static checkResetPasswordEmail(){
+        return [
+            query('email', 'Email is required').isEmail()
+            .custom((email, {req}) => {
+                return User.findOne({
+                    email: email
+                }).then(user => {
+                    if (user) {
+                        return true;             
+                    }else {
+                        throw('No User Registered with such email, Please Register');
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            })
+        ];
+    }
 }

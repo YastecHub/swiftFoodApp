@@ -64,7 +64,8 @@ export class UserController{
             verification_token_time: {$gt: Date.now()}
         },
         {
-           email_verified: true
+           email_verified: true,
+           updated_at: new Date(),
         },
         {
             new: true
@@ -73,7 +74,7 @@ export class UserController{
         if (user) {
            res.send(user);
         }else{
-            throw new Error('Email verification Token is Expired.Please try again...')
+            throw new Error('Wrong Otp or Email verification Token is Expired.Please try again...')
         }
        } catch (e) {
         next(e);
@@ -87,17 +88,18 @@ export class UserController{
         const user = await User.findOneAndUpdate(
         {  email: email },
         {
+            updated_at: new Date(),
             verification_token: verification_token,
             verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME
         }
       );
         if (user) {
+            res.json({success: true });
             await NodeMailer.sendMail({
                 to: [user.email],
                 subject: 'Resend Email Verification',
                 html: `<h1>Your Otp is ${verification_token}</h1>`
             });
-            res.json({success: true });
         }else{
             throw new Error('User doesn\'t exist')
         }
@@ -127,6 +129,33 @@ export class UserController{
             });
         } catch (e) {
             next(e)
+        }
+    }
+
+    static async sendResetPasswordOtp(req, res, next){
+    const email = req.query.email;
+       const reset_password_token = Utils.generateVerificationToken();
+       try {
+            const user = await User.findOneAndUpdate(
+                {  email: email },
+                {
+                    updated_at: new Date(),
+                    reset_password_token: reset_password_token,
+                    reset_password_token_time: Date.now() + new Utils().MAX_TOKEN_TIME
+                }
+            );
+            if (user) {
+                res.json({success: true });
+                await NodeMailer.sendMail({
+                    to: [user.email],
+                    subject: 'Resend Password email verification OTP',
+                    html: `<h1>Your Otp is ${reset_password_token}</h1>`
+                });
+            }else{
+                throw new Error('User doesn\'t exist')
+            }
+        } catch (e) {
+            next(e);
         }
     }
 }
