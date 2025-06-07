@@ -97,4 +97,34 @@ export class UserValidators{
             })
         ];
     }
+
+    static resetPassword(){
+         return [
+            body('email', 'Email is required').isEmail()
+            .custom((email, {req}) => {
+                return User.findOne({
+                    email: email,
+                }).then(user => {
+                    if (user) {
+                        req.user = user
+                        return true;             
+                    }else {
+                        throw('No User with such email');
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            }),
+            body('new_password', 'New password is required').isAlphanumeric(),
+            body('otp', 'Reset password token is required.').isNumeric()
+            .custom((reset_password_token, {req}) => {
+                if(req.user.reset_password_token == reset_password_token){
+                    return true;
+                }else{
+                    req.errorStatus = 422;
+                    throw('Reset password token is invalid, please try again');
+                }
+            })    
+        ];
+    }
 }
