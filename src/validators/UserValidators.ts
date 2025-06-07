@@ -57,7 +57,7 @@ export class UserValidators{
         ];
     } 
 
-    static checkResetPasswordEmail(){
+    static checkResetPasswordEmail() {
         return [
             query('email', 'Email is required').isEmail()
             .custom((email, {req}) => {
@@ -68,6 +68,28 @@ export class UserValidators{
                         return true;             
                     }else {
                         throw('No User Registered with such email, Please Register');
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            })
+        ];
+    }
+
+    static verifyResetPasswordToken() {
+        return [
+            query('email', 'Email is required').isEmail(),
+            query('reset_password_token', 'Reset password token is required').isNumeric()
+            .custom((reset_password_token, {req}) => {
+                return User.findOne({
+                    email: req.query.email,
+                    reset_password_token: reset_password_token,
+                    reset_password_token_time: { $gt: Date.now() }
+                }).then(user => {
+                    if (user) {
+                        return true;             
+                    }else {
+                        throw('Reset password token doesn\'t exist. Please regenerate a new token.');
                     }
                 }).catch(e => {
                     throw new Error(e);

@@ -19,7 +19,8 @@ class UserRouter {
     getRoutes(){
         this.router.get('/send/verification/email', GlobalMiddleWare.auth , UserController.resendVerificationEmail);
         this.router.get('/login', UserValidators.login(), GlobalMiddleWare.checkError, UserController.login);
-        this.router.get('/reset/password', UserValidators.checkResetPasswordEmail(), GlobalMiddleWare.checkError, UserController.sendResetPasswordOtp);
+        this.router.get('/send/reset/password/token', UserValidators.checkResetPasswordEmail(), GlobalMiddleWare.checkError, UserController.sendResetPasswordOtp);
+        this.router.get('/verify/resetPasswordToken', UserValidators.verifyResetPasswordToken(), GlobalMiddleWare.checkError, UserController.verifyResetPasswordToken);
     }
 
     postRoutes(){

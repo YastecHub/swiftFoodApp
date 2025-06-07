@@ -133,7 +133,7 @@ export class UserController{
     }
 
     static async sendResetPasswordOtp(req, res, next){
-    const email = req.query.email;
+       const email = req.query.email;
        const reset_password_token = Utils.generateVerificationToken();
        try {
             const user = await User.findOneAndUpdate(
@@ -154,6 +154,14 @@ export class UserController{
             }else{
                 throw new Error('User doesn\'t exist')
             }
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async verifyResetPasswordToken(req, res, next){
+        try {
+            res.json({ success: true })
         } catch (e) {
             next(e);
         }
