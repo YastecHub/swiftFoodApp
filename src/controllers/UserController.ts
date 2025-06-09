@@ -7,6 +7,7 @@ import { Utils } from "../utils/utils";
 export class UserController{
 
     static async signup(req, res, next) {
+        
         console.log(Utils.generateVerificationToken(6));
         const email = req.body.email;
         const phone = req.body.phone;
@@ -32,8 +33,8 @@ export class UserController{
         
             let user = await new User(data).save();
             const payload = {
-                user_id: user._id,
-                email: email
+                aud: user._id,
+                email: user.email
             }
 
             const token = Jwt.jwtSign(payload);
@@ -118,7 +119,7 @@ export class UserController{
         try {
             await Utils.comparePassword(data);
             const payload = {
-                user_id: user._id,
+                aud: user._id,
                 email: user.email
             }
             const token = Jwt.jwtSign(payload);

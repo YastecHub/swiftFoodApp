@@ -16,12 +16,15 @@ export class GlobalMiddleWare{
         const header_auth = req.headers.authorization;
         const token = header_auth? header_auth.slice(7, header_auth.length) : null;
         try {
-            req.errorStatus = 401;
-            if (!token) next( new Error("JWT must be provided"));
+            if (!token){      
+                req.errorStatus = 401;
+                next( new Error("JWT must be provided"));
+            } 
             const decoded = await Jwt.jwtVerify(token);
             req.user = decoded;
             next();
-        } catch (e) {
+        } catch (e) {       
+           req.errorStatus = 401;
            next( new Error("JWT must be provided"));
         }
     }

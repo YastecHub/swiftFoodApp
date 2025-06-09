@@ -8,7 +8,7 @@ export class Jwt{
         return jwt.sign(
             payload,
             getEnvironmentVariables().jwt_secret_key as Secret,
-            {expiresIn: expires_in}
+            { expiresIn: expires_in, issuer: 'YastecHub' }
         );
     }
 
