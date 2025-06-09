@@ -1,3 +1,4 @@
+import { profile } from "console";
 import User from "../models/User";
 import { Jwt } from "../utils/Jwt";
 import { NodeMailer } from "../utils/NodeMailer";
@@ -179,6 +180,20 @@ export class UserController{
             );
             if (updatedUser) {
                res.send(updatedUser);
+            }else{
+                throw new Error('User doesn\'t exist')
+            }
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async profile(req, res, next){
+       const user = req.user;
+       try {
+            const profile = await User.findById(user.aud);
+            if (profile) {
+               res.send(profile);
             }else{
                 throw new Error('User doesn\'t exist')
             }
