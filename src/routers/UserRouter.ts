@@ -29,7 +29,7 @@ class UserRouter {
 
     patchRoutes(){
         this.router.patch('/reset/password', UserValidators.resetPassword(), GlobalMiddleWare.checkError , UserController.resetPassword);
-        this.router.patch('/verify', UserValidators.verifyUser(), GlobalMiddleWare.checkError , GlobalMiddleWare.auth, UserController.verify);
+        this.router.patch('/verify/emailToken', UserValidators.verifyUserEmailToken(), GlobalMiddleWare.checkError , GlobalMiddleWare.auth, UserController.verifyUserEmailToken);
     }
 
     putRoutes(){}
