@@ -99,7 +99,7 @@ export class UserValidators{
     }
 
     static resetPassword(){
-         return [
+        return [
             body('email', 'Email is required').isEmail()
             .custom((email, {req}) => {
                 return User.findOne({
@@ -127,4 +127,32 @@ export class UserValidators{
             })    
         ];
     }
+
+    static verifyPhoneNumber(){
+        return [
+            body('phone', 'PhoneNumber is required').isNumeric()
+        ];
+    }
+
+    static verifyUserProfile(){
+        return[
+            body('phone', 'PhoneNumber is required').isNumeric(),
+            body('email', 'Email is required').isEmail()
+            .custom((email, {req}) => {
+                return User.findOne({
+                    email: email,
+                }).then(user => {
+                    if (user) {
+                        throw('User with email already exist, Please provide a unique email Id');
+       
+                    }else {  
+                        return true;      
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            }),
+            body('password', 'Password is required').isAlphanumeric(),
+        ];
+    };
 }

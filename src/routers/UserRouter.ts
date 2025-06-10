@@ -31,6 +31,8 @@ class UserRouter {
     patchRoutes(){
         this.router.patch('/reset/password', UserValidators.resetPassword(), GlobalMiddleWare.checkError , UserController.resetPassword);
         this.router.patch('/verify/emailToken', GlobalMiddleWare.auth,  UserValidators.verifyUserEmailToken(), GlobalMiddleWare.checkError , UserController.verifyUserEmailToken);
+       this.router.patch('/update/phoneNumber', GlobalMiddleWare.auth,  UserValidators.verifyPhoneNumber(), GlobalMiddleWare.checkError , UserController.updatePhoneNumber);
+      this.router.patch('/update/profile', GlobalMiddleWare.auth,  UserValidators.verifyUserProfile(), GlobalMiddleWare.checkError , UserController.updateUserProfile);
     }
 
     putRoutes(){}
