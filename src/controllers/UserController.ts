@@ -121,7 +121,8 @@ export class UserController{
             await Utils.comparePassword(data);
             const payload = {
                 aud: user._id,
-                email: user.email
+                email: user.email,
+                type: user.type
             }
             const token = Jwt.jwtSign(payload);
             //send email to user for verification
@@ -247,7 +248,8 @@ export class UserController{
 
             const payload = {
                 aud: user.aud,
-                email: updatedUser.email
+                email: updatedUser.email,
+                type: updatedUser.type
             }
 
             const token = Jwt.jwtSign(payload);
