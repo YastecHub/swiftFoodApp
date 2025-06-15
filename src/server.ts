@@ -5,6 +5,7 @@ import { getEnvironmentVariables } from './environments/environment';
 import UserRouter from './routers/UserRouter';
 import * as cors from 'cors';
 import BannerRouter from './routers/BannerRouter';
+import CityRouter from './routers/CityRouter';
 
 export class Server{
 
@@ -42,7 +43,8 @@ export class Server{
     setRoute(){
         this.app.use('src/uploads', express.static('src/uploads'));
         this.app.use('/api/user/', UserRouter);
-        this.app.use('/api/banner/', BannerRouter)
+        this.app.use('/api/banner/', BannerRouter);
+        this.app.use('/api/city/', CityRouter)
     }
 
     handleErrors() {
