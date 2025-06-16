@@ -1,14 +1,17 @@
 import * as Bcrypt from 'bcrypt';
 import * as Multer from 'multer';
 import * as fs from 'fs';
-
-const uploadPath = './src/uploads/restaurants';
+import * as path from 'path';
 
 const storageOptions = Multer.diskStorage({
-    destination: (req, file, cb) => {
+    destination: (req, file, cb) => {  
+        const fieldName = file.fieldname;
+        const uploadPath = path.join(__dirname, `../uploads/${fieldName}`);
+
         if (!fs.existsSync(uploadPath)) {
             fs.mkdirSync(uploadPath, { recursive: true });
         }
+
         cb(null, uploadPath);
     },
     filename: (req, file, cb) => {
@@ -21,7 +24,7 @@ const fileFilter = (req, file, cb) => {
     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
         cb(null, true)
     } else {
-        cb(null, false)
+        cb(new Error('Only JPEG/PNG files are allowed'), false);
     }
 }
 

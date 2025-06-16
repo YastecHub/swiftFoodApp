@@ -22,7 +22,7 @@ class RestaurantRouter {
     }
 
     postRoutes(){
-        this.router.post('/create',GlobalMiddleWare.auth, GlobalMiddleWare.adminRole, new Utils().multer.single('cover'), RestaurantValidators.addRestaurant(), GlobalMiddleWare.checkError, RestaurantController.addRestaurant);
+        this.router.post('/create',GlobalMiddleWare.auth, GlobalMiddleWare.adminRole, new Utils().multer.single('restaurantImages'), RestaurantValidators.addRestaurant(), GlobalMiddleWare.checkError, RestaurantController.addRestaurant);
     }
 
     patchRoutes(){

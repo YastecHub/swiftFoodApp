@@ -25,7 +25,7 @@ export class RestaurantValidators{
             .isLength({ min: 8, max: 20 })
             .withMessage('Password must be between 8-20 characters'),
 
-            body('cover', 'Banner image is required')
+            body('restaurantImages', 'Cover image is required')
             .custom((cover, {req}) => {
                 if (req.file) {
                     return true;
@@ -42,7 +42,7 @@ export class RestaurantValidators{
             body('status', 'Status is required').isString(),
             body('address', 'Address is required').isString(),
             body('location', 'location is required').isString(),
-            body('cuisines', 'Cuisine is required').isString(),
+            body('cuisine', 'Cuisine is required').isString(),
             body('city_id', 'City Id is required').isString(),
         ];
     }

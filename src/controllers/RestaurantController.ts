@@ -40,7 +40,7 @@ export class RestaurantController{
                 openTime: restaurant.openTime,
                 closeTime: restaurant.closeTime,
                 status: restaurant.status,
-                cuisines: JSON.parse(restaurant.cuisines),
+                cuisine: JSON.parse(restaurant.cuisine),
                 price: parseInt(restaurant.price),
                 delivery_time: parseInt(restaurant.delivery_time),
                 city_id: restaurant.city_id,
