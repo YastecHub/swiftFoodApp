@@ -1,6 +1,6 @@
 import {Router} from "express"
 import { GlobalMiddleWare } from "../middlewares/GlobalMiddleWare";
-import { ItemController } from "../controllers/itemController";
+import { ItemController } from "../controllers/ItemController";
 import { ItemValidators } from "../validators/ItemValidators";
 import { Utils } from "../utils/utils";
 class ItemRouter {
