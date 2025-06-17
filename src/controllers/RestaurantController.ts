@@ -25,12 +25,6 @@ export class RestaurantController{
             };
            const user = await new User(data).save();
 
-           //create categories
-           const categoriesData = JSON.parse(restaurant.categories).map(x => {
-            return {name: x, user_id: user._id};
-           })
-           const categories = Category.insertMany(categoriesData);
-
            //create restaurant
            let restaurant_data: any = {
                 name: restaurant.res_name,
@@ -49,6 +43,13 @@ export class RestaurantController{
            };
            if(restaurant.description) restaurant_data = {...restaurant_data, description: restaurant.description};
            const restaurantDoc = await new Restaurant(restaurant_data).save();
+
+          //create categories
+           const categoriesData = JSON.parse(restaurant.categories).map(x => {
+            return {name: x, restaurant_id: restaurantDoc._id};
+           })
+           const categories = Category.insertMany(categoriesData);
+
             res.send(restaurantDoc);
         } catch (e) {
             next(e);
@@ -117,6 +118,21 @@ export class RestaurantController{
                             ]
                         }
                     }
+                }
+            );
+            res.send(restaurants);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+
+    static async getRestaurants(req, res, next){
+        try {
+            const restaurants = await Restaurant.find
+            (
+                {
+                    status: 'active'
                 }
             );
             res.send(restaurants);
