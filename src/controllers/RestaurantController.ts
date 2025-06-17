@@ -28,7 +28,7 @@ export class RestaurantController{
            //create restaurant
            let restaurant_data: any = {
                 name: restaurant.res_name,
-                short_name: restaurant.short_name,
+                //short_name: restaurant.short_name,
                 location: JSON.parse(restaurant.location),
                 address: restaurant.address,
                 openTime: restaurant.openTime,
