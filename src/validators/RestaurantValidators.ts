@@ -1,4 +1,4 @@
-import { body } from "express-validator";
+import { body, query } from "express-validator";
 import User from "../models/User";
 
 export class RestaurantValidators{
@@ -44,6 +44,23 @@ export class RestaurantValidators{
             body('location', 'location is required').isString(),
             body('cuisine', 'Cuisine is required').isString(),
             body('city_id', 'City Id is required').isString(),
+        ];
+    }
+
+    static getNearbyRestaurants(){
+        return [
+            query('lat', 'Latitude is required').isNumeric(),
+            query('lng', 'Longitude is required').isNumeric(),
+            query('radius', 'Radius is required').isNumeric()
+        ];
+    }
+
+    static searchNearbyRestaurants(){
+        return [
+            query('lat', 'Latitude is required').isNumeric(),
+            query('lng', 'Longitude is required').isNumeric(),
+            query('radius', 'Radius is required').isNumeric(),
+            query('name', 'Search Name is required').isString()
         ];
     }
 }

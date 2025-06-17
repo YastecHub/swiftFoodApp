@@ -18,7 +18,8 @@ class RestaurantRouter {
     }
 
     getRoutes(){
-        this.router.get('/restaurants',GlobalMiddleWare.auth, RestaurantController.getRestaurants);
+        this.router.get('/nearbyRestaurants',GlobalMiddleWare.auth, RestaurantValidators.getNearbyRestaurants(), GlobalMiddleWare.checkError, RestaurantController.getNearbyRestaurants);
+        this.router.get('/searchNearbyRestaurants',GlobalMiddleWare.auth, RestaurantValidators.searchNearbyRestaurants(), GlobalMiddleWare.checkError, RestaurantController.searchNearbyRestaurants);
     }
 
     postRoutes(){
