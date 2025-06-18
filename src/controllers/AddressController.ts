@@ -17,7 +17,17 @@ export class AddressController{
             }
             const address = await new Address(addressData).save();
             //delete address.user_id;
-            res.send(address);
+            const response_address = {
+                title: address.title,
+                address: address.address,
+                landmark: address.landmark,
+                house: address.house,
+                lat: address.lat,
+                lng: address.lng,
+                created_at: address.created_at,
+                updated_at: address.updated_at
+            }
+            res.send(response_address);
         } catch (e) {
             next(e);
         }
@@ -68,7 +78,8 @@ export class AddressController{
                 { 
                     user_id: user_id,
                     _id: id
-                }
+                },
+                { user_id: 0, __v: 0 }
             );
             res.send(address);
         } catch (e) {
@@ -95,7 +106,7 @@ export class AddressController{
                     lng: data.lng,
                     updated_at: new Date()
                 },
-                { new: true } 
+                { new: true, projection: { user_id: 0, __v: 0} } 
             );
             if(address) {
                 res.send(address);
