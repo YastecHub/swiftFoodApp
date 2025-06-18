@@ -33,7 +33,7 @@ export class AddressController{
         }
     }
 
-    static async getAddresses(req, res, next){
+    static async getUserAddresses(req, res, next){
         const user_id = req.user.aud;
         try {
             const addresses = await Address.find({ user_id }, {user_id: 0, __v: 0 });
@@ -43,7 +43,7 @@ export class AddressController{
         }
     }
 
-    static async getLimitedAddresses(req, res, next){
+    static async getUserLimitedAddresses(req, res, next){
         const user_id = req.user.aud;
         const limit = req.params.limit;
         try {

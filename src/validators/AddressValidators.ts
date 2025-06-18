@@ -32,7 +32,7 @@ export class AddressValidators{
         ]
     }
 
-    static getLimitedAddresses(){
+    static getUserLimitedAddresses(){
         return[
             query('limit', 'Address limit is required').isNumeric(),
         ]
