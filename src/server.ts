@@ -11,6 +11,7 @@ import CategoryRouter from './routers/CategoryRouter';
 import ItemRouter from './routers/ItemRouter';
 import AddressRouter from './routers/AddressRouter';
 import OrderRouter from './routers/OrderRouter';
+import { Utils } from './utils/utils';
 
 export class Server{
 
@@ -19,13 +20,19 @@ export class Server{
     constructor(){
         this.setConfigs();
         this.setRoute();
+        this.error404Handler();
         this.handleErrors();
     }
 
-    setConfigs(){
+    setConfigs(){ 
+        this.dotenvConfigs();
         this.connectMongoDb();
         this.allowCors();
         this.configureBodyParser();
+    }
+
+    dotenvConfigs(){
+        Utils.dotenvConfigs();
     }
 
     connectMongoDb(){
@@ -46,7 +53,7 @@ export class Server{
     }
 
     setRoute(){
-        this.app.use('src/uploads/restaurants', express.static('src/uploads/restaurants'));
+        this.app.use('src/uploads', express.static('src/uploads'));
         this.app.use('/api/user/', UserRouter);
         this.app.use('/api/banner/', BannerRouter);
         this.app.use('/api/city/', CityRouter);
@@ -55,6 +62,15 @@ export class Server{
         this.app.use('/api/item/', ItemRouter);
         this.app.use('/api/address/', AddressRouter);
         this.app.use('/api/order/', OrderRouter);
+    }
+
+    error404Handler() {
+        this.app.use((req, res) => {
+            res.status(404).json({
+                message: 'Not found',
+                status_code: 404
+            });
+        });
     }
 
     handleErrors() {
