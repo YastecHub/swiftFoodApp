@@ -33,12 +33,34 @@ export class AddressController{
         }
     }
 
-    static async getUserAddresses(req, res, next){
+    static async getUserAddresses(req, res, next) {
         const user_id = req.user.aud;
+        const perPage = 5;
+        const currentPage = parseInt(req.query.page) || 1;
+        const prevPage = currentPage == 1 ? null : currentPage - 1;
+        let nextPage = currentPage + 1;
         try {
-            const addresses = await Address.find({ user_id }, {user_id: 0, __v: 0 });
-            res.send(addresses);
-        } catch (e) {
+            const address_doc_count = await Address.countDocuments({ user_id: user_id });
+            const totalPages = Math.ceil(address_doc_count/perPage);
+            if(totalPages == 0 || totalPages == currentPage) {
+                nextPage = null;
+            } 
+            if(totalPages < currentPage) {
+                throw('No more Addresses available');
+            }
+            const addresses = await Address.find({ user_id }, {user_id: 0, __v: 0})
+                                            .skip((currentPage * perPage) - perPage)
+                                            .limit(perPage);
+            res.json({
+                addresses,
+                perPage,
+                currentPage,
+                prevPage,
+                nextPage,
+                totalPages,
+                // totalRecords: address_doc_count
+            });
+        } catch(e) {
             next(e);
         }
     }
