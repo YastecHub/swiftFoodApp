@@ -56,72 +56,153 @@ export class RestaurantController{
         }
     }
 
-    static async getNearbyRestaurants(req, res, next){
-        const data = req.query
+    static async getNearbyRestaurants(req, res, next){ 
         //const METERS_PER_KM = 1000;
+        const data = req.query
         const EARTH_RADIUS_IN_KM = 6378.1;
+        const perPage = 10;
+        const currentPage = parseInt(data.page) || 1;
+        const prevPage = currentPage == 1 ? null : currentPage - 1;
+        let nextPage = currentPage + 1;
         try {
-            const restaurants = await Restaurant.find
-            (
+            const restaurants_doc_count = await Restaurant.countDocuments(
                 {
                     status: 'active',
-                    location: {
-                        // $nearSphere: {
-                        //     $geometry:
-                        //     {
-                        //         type: "Point",
+                    location: { 
+                        // $nearSphere: { 
+                        //     $geometry: 
+                        //     { 
+                        //         type: "Point", 
                         //         coordinates: [ parseFloat(data.lng), parseFloat(data.lat) ]
-                        //     },
-                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM
+                        //     }, 
+                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM 
                         // }
-
-                        $geoWithin: {
-                           $centerSphere: [ 
-                                [ parseFloat(data.lng), parseFloat(data.lat) ],
-                                parseFloat(data.radius) / EARTH_RADIUS_IN_KM
-                           ]
+                        $geoWithin: { 
+                            $centerSphere: [ 
+                                [ parseFloat(data.lng), parseFloat(data.lat) ], 
+                                parseFloat(data.radius) /  EARTH_RADIUS_IN_KM
+                            ]
                         }
                     }
                 }
             );
-            res.send(restaurants);
-        } catch (e) {
+            const totalPages = Math.ceil(restaurants_doc_count / perPage);
+            if(totalPages == 0 || totalPages == currentPage) {
+                nextPage = null;
+            } 
+            if(totalPages < currentPage) {
+                throw('No more Restaurants available');
+            }
+            const restaurants = await Restaurant.find(
+                {
+                    status: 'active',
+                    location: { 
+                        // $nearSphere: { 
+                        //     $geometry: 
+                        //     { 
+                        //         type: "Point", 
+                        //         coordinates: [ parseFloat(data.lng), parseFloat(data.lat) ]
+                        //     }, 
+                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM 
+                        // }
+                        $geoWithin: { 
+                            $centerSphere: [ 
+                                [ parseFloat(data.lng), parseFloat(data.lat) ], 
+                                parseFloat(data.radius) /  EARTH_RADIUS_IN_KM
+                            ]
+                        }
+                    }
+                }
+            )
+            .skip((currentPage * perPage) - perPage)
+            .limit(perPage);
+
+            res.json({
+                restaurants,
+                perPage,
+                currentPage,
+                prevPage,
+                nextPage,
+                totalPages,
+                // totalRecords: restaurants_doc_count
+            });
+        } catch(e) {
             next(e);
         }
     }
 
     
     static async searchNearbyRestaurants(req, res, next){
-        const data = req.query
         //const METERS_PER_KM = 1000;
+        const data = req.query;    
         const EARTH_RADIUS_IN_KM = 6378.1;
-        try {
-            const restaurants = await Restaurant.find
-            (
+        const perPage = 5;
+        const currentPage = parseInt(data.page) || 1;
+        const prevPage = currentPage == 1 ? null : currentPage - 1;
+        let nextPage = currentPage + 1;
+         try {
+            const restaurants_doc_count = await Restaurant.countDocuments(
                 {
                     status: 'active',
-                    name: { $regex: data.name, $options: 'i' },
-                    location: {
-                        // $nearSphere: {
-                        //     $geometry:
-                        //     {
-                        //         type: "Point",
+                    name: { $regex: data.name, $options: 'i'},
+                    location: { 
+                        // $nearSphere: { 
+                        //     $geometry: 
+                        //     { 
+                        //         type: "Point", 
                         //         coordinates: [ parseFloat(data.lng), parseFloat(data.lat) ]
-                        //     },
-                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM
+                        //     }, 
+                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM 
                         // }
-
-                        $geoWithin: {
+                        $geoWithin: { 
                             $centerSphere: [ 
-                                [ parseFloat(data.lng), parseFloat(data.lat) ],
-                                parseFloat(data.radius) / EARTH_RADIUS_IN_KM
+                                [ parseFloat(data.lng), parseFloat(data.lat) ], 
+                                parseFloat(data.radius) /  EARTH_RADIUS_IN_KM
                             ]
                         }
                     }
                 }
             );
-            res.send(restaurants);
-        } catch (e) {
+            const totalPages = Math.ceil(restaurants_doc_count / perPage);
+            if(totalPages == 0 || totalPages == currentPage) {
+                nextPage = null;
+            } 
+            if(totalPages < currentPage) {
+                throw('No more Restaurants available');
+            }
+            const restaurants = await Restaurant.find(
+                {
+                    status: 'active',
+                    name: { $regex: data.name, $options: 'i'},
+                    location: { 
+                        // $nearSphere: { 
+                        //     $geometry: 
+                        //     { 
+                        //         type: "Point", 
+                        //         coordinates: [ parseFloat(data.lng), parseFloat(data.lat) ]
+                        //     }, 
+                        //     $maxDistance: parseFloat(data.radius) * METERS_PER_KM 
+                        // }
+                        $geoWithin: { 
+                            $centerSphere: [ 
+                                [ parseFloat(data.lng), parseFloat(data.lat) ], 
+                                parseFloat(data.radius) /  EARTH_RADIUS_IN_KM
+                            ]
+                        }
+                    }
+                }
+            )
+            .skip((currentPage * perPage) - perPage)
+            .limit(perPage);
+            res.json({
+                restaurants,
+                perPage,
+                currentPage,
+                prevPage,
+                nextPage,
+                totalPages
+            });
+        } catch(e) {
             next(e);
         }
     }
