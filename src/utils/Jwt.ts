@@ -4,7 +4,7 @@ import { getEnvironmentVariables } from "../environments/environment";
 import * as Crypto from 'crypto';
 
 export class Jwt{
-    static jwtSign(payload, userId, expires_in: any = '1h') {
+    static jwtSign(payload, userId, expires_in: any = '20s') {
         //Jwt.gen_secret_key();
         return jwt.sign(
             payload,

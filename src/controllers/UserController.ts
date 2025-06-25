@@ -275,4 +275,29 @@ export class UserController{
             next(e)
         }
     }
+
+    static async getNewTokens(req, res, next) {
+        const refreshToken = req.body.refreshToken;
+        try {
+            const decoded_data = await Jwt.jwtVerifyRefreshToken(refreshToken);
+            if(decoded_data) {
+                const payload = {
+                    email: decoded_data.email,
+                    type: decoded_data.type
+                };
+                const access_token = Jwt.jwtSign(payload, decoded_data.aud);
+                const refresh_token = Jwt.jwtSignRefreshToken(payload, decoded_data.aud);
+                res.json({
+                    accessToken: access_token,
+                    refreshToken: refresh_token
+                });
+            } else {
+                req.errorStatus = 403;
+                throw('Access is forbidden');
+            }
+        } catch(e) {
+            req.errorStatus = 403;
+            next(e);
+        }
+    }
 }
