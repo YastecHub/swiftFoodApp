@@ -1,19 +1,17 @@
-import { profile } from "console";
 import User from "../models/User";
 import { Jwt } from "../utils/Jwt";
 import { NodeMailer } from "../utils/NodeMailer";
 import { Utils } from "../utils/utils";
 
-
 export class UserController{
 
     static async signup(req, res, next) {
-        
+        console.log('req: ', req);
         console.log(Utils.generateVerificationToken(6));
-        const email = req.body.email;
-        const phone = req.body.phone;
-        const password = req.body.password;
         const name = req.body.name;
+        const phone = req.body.phone;
+        const email = req.body.email;
+        const password = req.body.password;
         const type = req.body.type;
         const status = req.body.status;
         const verification_token = Utils.generateVerificationToken(6);
@@ -34,15 +32,18 @@ export class UserController{
         
             let user = await new User(data).save();
             const payload = {
-                aud: user._id,
-                email: user.email
+                //aud: user._id,
+                email: user.email,
+                type: user.type
             }
 
-            const token = Jwt.jwtSign(payload);
+            const access_token = Jwt.jwtSign(payload, user._id);
+            const refresh_token = Jwt.jwtSignRefreshToken(payload, user._id);
 
             //send email to user for verification
             res.json({
-                token: token,
+                token: access_token,
+                refresh_token: refresh_token,
                 user: user
             });
             await NodeMailer.sendMail({
@@ -120,14 +121,16 @@ export class UserController{
         try {
             await Utils.comparePassword(data);
             const payload = {
-                aud: user._id,
+                //aud: user._id,
                 email: user.email,
                 type: user.type
             }
-            const token = Jwt.jwtSign(payload);
+            const access_token = Jwt.jwtSign(payload, user._id);
+            const refresh_token = Jwt.jwtSignRefreshToken(payload, user._id);
             //send email to user for verification
             res.json({
-                token: token,
+                token: access_token,
+                refresh_token: refresh_token,
                 user: user
             });
         } catch (e) {
@@ -247,16 +250,18 @@ export class UserController{
             );
 
             const payload = {
-                aud: user.aud,
+                //aud: user.aud,
                 email: updatedUser.email,
                 type: updatedUser.type
             }
 
-            const token = Jwt.jwtSign(payload);
+            const access_token = Jwt.jwtSign(payload, user.aud);
+            const refresh_token = Jwt.jwtSignRefreshToken(payload, user.aud);
 
             //send email to user for verification
             res.json({
-                token: token,
+                access_token: access_token,
+                refresh_token: refresh_token,
                 user: updatedUser
             });
             await NodeMailer.sendMail({
