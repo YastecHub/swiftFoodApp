@@ -12,6 +12,7 @@ import ItemRouter from './routers/ItemRouter';
 import AddressRouter from './routers/AddressRouter';
 import OrderRouter from './routers/OrderRouter';
 import { Utils } from './utils/utils';
+import { Redis } from './utils/Redis';
 
 export class Server{
 
@@ -27,6 +28,7 @@ export class Server{
     setConfigs(){ 
         this.dotenvConfigs();
         this.connectMongoDb();
+        this.connectRedis();
         this.allowCors();
         this.configureBodyParser();
     }
@@ -40,6 +42,13 @@ export class Server{
         .then(() => {
         console.log('Connected to Mongo successfully');
         });
+    }
+
+    async connectRedis(){
+        Redis.connectToRedis();
+
+        await Redis.setValue('test', 'test_value', 60 * 60 * 24);
+        console.log('Test Value:', await Redis.getValue('test'));
     }
 
     configureBodyParser(){

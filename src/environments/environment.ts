@@ -8,6 +8,12 @@ export interface Environment{
     sendgrid?: {
         api_key: string,
         email_from: string
+    },
+    redis?: {
+        username?: string,
+        password?: string,
+        host: string,
+        port: number
     }
 }
 

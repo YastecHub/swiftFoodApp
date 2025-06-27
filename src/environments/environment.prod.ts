@@ -10,5 +10,11 @@ export const ProdEnvironment: Environment = {
     sendgrid: {
         api_key: process.env.PROD_SENDGRID_API_KEY,
         email_from: process.env.PROD_SENDGRID_SENDER_EMAIL
+    },
+    redis: {
+        username: process.env.SERVER_REDIS_USERNAME,
+        password: process.env.SERVER_REDIS_PASSWORD,
+        host: process.env.SERVER_REDIS_HOST,
+        port: parseInt(process.env.SERVER_REDIS_PORT)
     }
 };

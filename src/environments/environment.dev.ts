@@ -10,5 +10,11 @@ export const DevEnvironment: Environment = {
     sendgrid: {
         api_key: process.env.DEV_SENDGRID_API_KEY,
         email_from: process.env.DEV_SENDGRID_SENDER_EMAIL
+    },
+    redis: {
+        username: null,
+        password: null,
+        host: process.env.LOCAL_REDIS_HOST,
+        port: parseInt(process.env.LOCAL_REDIS_PORT)
     }
 };
