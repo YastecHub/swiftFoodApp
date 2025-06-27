@@ -30,7 +30,18 @@ export class UserController{
             };
 
         
-            let user = await new User(data).save();
+            const user = await new User(data).save();
+            const user_data ={
+                email: user.email,
+                email_verified: user.email_verified,
+                phone: user.phone,
+                name: user.name,
+                type: user.type,
+                status: user.status,
+                created_at: user.created_at,
+                updated_at: user.updated_at
+            }
+
             const payload = {
                 //aud: user._id,
                 email: user.email,
@@ -44,7 +55,7 @@ export class UserController{
             res.json({
                 token: access_token,
                 refresh_token: refresh_token,
-                user: user
+                user: user_data
             });
             await NodeMailer.sendMail({
                 to: [email],
@@ -71,7 +82,16 @@ export class UserController{
            updated_at: new Date(),
         },
         {
-            new: true
+            new: true,
+            projection: {
+                verification_token: 0,
+                verification_token_time: 0,
+                password: 0,
+                reset_password_token: 0,
+                reset_password_token_time: 0,
+                __v: 0,
+                _id: 0
+            }
         }
       );
         if (user) {
@@ -127,11 +147,23 @@ export class UserController{
             }
             const access_token = Jwt.jwtSign(payload, user._id);
             const refresh_token = Jwt.jwtSignRefreshToken(payload, user._id);
+
+            const user_data ={
+                email: user.email,
+                email_verified: user.email_verified,
+                phone: user.phone,
+                name: user.name,
+                type: user.type,
+                status: user.status,
+                created_at: user.created_at,
+                updated_at: user.updated_at
+            }
+
             //send email to user for verification
             res.json({
                 token: access_token,
                 refresh_token: refresh_token,
-                user: user
+                user: user_data
             });
         } catch (e) {
             next(e)
@@ -180,7 +212,18 @@ export class UserController{
                     updated_at: new Date(),
                     password: encryptedPassword
                 },
-                { new: true }
+                { 
+                    new: true,
+                    projection: {
+                        verification_token: 0,
+                        verification_token_time: 0,
+                        password: 0,
+                        reset_password_token: 0,
+                        reset_password_token_time: 0,
+                        __v: 0,
+                        _id: 0
+                    }
+              }
             );
             if (updatedUser) {
                res.send(updatedUser);
@@ -197,7 +240,17 @@ export class UserController{
        try {
             const profile = await User.findById(user.aud);
             if (profile) {
-               res.send(profile);
+                const user_data ={
+                    email: profile.email,
+                    email_verified: profile.email_verified,
+                    phone: profile.phone,
+                    name: profile.name,
+                    type: profile.type,
+                    status: profile.status,
+                    created_at: profile.created_at,
+                    updated_at: profile.updated_at
+               };
+               res.send(user_data);
             }else{
                 throw new Error('User doesn\'t exist')
             }
@@ -213,7 +266,18 @@ export class UserController{
             const userData = await User.findByIdAndUpdate(
                 user.aud,
                 {phone: phone, updated_at: new Date() },
-                { new: true }
+                { 
+                    new: true ,
+                    projection: {
+                        verification_token: 0,
+                        verification_token_time: 0,
+                        password: 0,
+                        reset_password_token: 0,
+                        reset_password_token_time: 0,
+                        __v: 0,
+                        _id: 0
+                    }
+                }
             );
             res.send(userData);
         } catch (e) {
@@ -227,8 +291,6 @@ export class UserController{
         const new_email = req.body.email;
         const plain_password = req.body.password;
         const verification_token = Utils.generateVerificationToken(6);
-
-
         try {
             const userData = await User.findById(user.aud);
             if(!userData) throw new Error('User doesn\`t exist');
@@ -246,7 +308,18 @@ export class UserController{
                     verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
                     updated_at: new Date()
                 },
-                { new: true }
+                { 
+                    new: true,
+                    projection: {
+                        verification_token: 0,
+                        verification_token_time: 0,
+                        password: 0,
+                        reset_password_token: 0,
+                        reset_password_token_time: 0,
+                        __v: 0,
+                        _id: 0
+                    }
+                }
             );
 
             const payload = {
