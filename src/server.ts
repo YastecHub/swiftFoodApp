@@ -44,11 +44,8 @@ export class Server{
         });
     }
 
-    async connectRedis(){
+    connectRedis(){
         Redis.connectToRedis();
-
-        await Redis.setValue('test', 'test_value', 60 * 60 * 24);
-        console.log('Test Value:', await Redis.getValue('test'));
     }
 
     configureBodyParser(){
