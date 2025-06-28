@@ -26,7 +26,8 @@ class UserRouter {
 
     postRoutes(){
         this.router.post('/signup', UserValidators.signup() , GlobalMiddleWare.checkError, UserController.signup);     
-        this.router.post('/refresh_token', UserValidators.checkRefreshToken(), GlobalMiddleWare.checkError, UserController.getNewTokens);        
+        this.router.post('/refresh_token',GlobalMiddleWare.decodeRefreshToken, GlobalMiddleWare.checkError, UserController.getNewTokens);        
+        this.router.post('/logout', GlobalMiddleWare.auth, GlobalMiddleWare.decodeRefreshToken, UserController.logout);
     }
 
     patchRoutes(){

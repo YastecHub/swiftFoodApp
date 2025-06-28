@@ -1,6 +1,7 @@
 import User from "../models/User";
 import { Jwt } from "../utils/Jwt";
 import { NodeMailer } from "../utils/NodeMailer";
+import { Redis } from "../utils/Redis";
 import { Utils } from "../utils/utils";
 
 export class UserController{
@@ -350,9 +351,9 @@ export class UserController{
     }
 
     static async getNewTokens(req, res, next) {
-        const refreshToken = req.body.refreshToken;
+        const decoded_data = req.user;
         try {
-            const decoded_data = await Jwt.jwtVerifyRefreshToken(refreshToken);
+            (decoded_data);
             if(decoded_data) {
                 const payload = {
                     email: decoded_data.email,
@@ -364,6 +365,25 @@ export class UserController{
                     accessToken: access_token,
                     refreshToken: refresh_token
                 });
+            } else {
+                req.errorStatus = 403;
+                throw('Access is forbidden');
+            }
+        } catch(e) {
+            req.errorStatus = 403;
+            next(e);
+        }
+    }
+
+    static async logout(req, res, next) {
+        const refreshToken = req.body.refreshToken;
+        const decoded_data = req.user;
+        try {
+            if(decoded_data) {
+                //delete the refresh token from the database or mark it as invalid
+                await Redis.deleteKey(decoded_data.aud);
+                res.json({
+                    success: true,});
             } else {
                 req.errorStatus = 403;
                 throw('Access is forbidden');

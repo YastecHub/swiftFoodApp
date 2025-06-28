@@ -156,17 +156,17 @@ export class UserValidators{
         ];
     };
 
-    static checkRefreshToken() {
-        return [
-            body('refreshToken', 'Refresh token is required').isString()
-                .custom((refreshToken, {req}) => {
-                    if (refreshToken) {
-                        return true;
-                    } else {
-                        req.errorStatus = 403;
-                        throw('Acceess is forbidden, Please login again');
-                    }
-                })
-        ];
-    }
+    // static checkRefreshToken() {
+    //     return [
+    //         body('refreshToken', 'Refresh token is required').isString()
+    //             .custom((refreshToken, {req}) => {
+    //                 if (refreshToken) {
+    //                     return true;
+    //                 } else {
+    //                     req.errorStatus = 403;
+    //                     throw('Acceess is forbidden, Please login again');
+    //                 }
+    //             })
+    //     ];
+    // }
 }
