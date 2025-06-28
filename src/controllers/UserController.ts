@@ -49,7 +49,7 @@ export class UserController{
             }
 
             const access_token = Jwt.jwtSign(payload, user._id);
-            const refresh_token = Jwt.jwtSignRefreshToken(payload, user._id);
+            const refresh_token = await Jwt.jwtSignRefreshToken(payload, user._id);
 
             //send email to user for verification
             res.json({
@@ -58,7 +58,7 @@ export class UserController{
                 user: user_data
             });
             await NodeMailer.sendMail({
-                to: [email],
+                to: [user.email],
                 subject: 'Email Verification',
                 html: `<h1>Your Otp is ${verification_token}</h1>`
             });         
@@ -146,7 +146,7 @@ export class UserController{
                 type: user.type
             }
             const access_token = Jwt.jwtSign(payload, user._id);
-            const refresh_token = Jwt.jwtSignRefreshToken(payload, user._id);
+            const refresh_token = await Jwt.jwtSignRefreshToken(payload, user._id);
 
             const user_data ={
                 email: user.email,
@@ -329,7 +329,7 @@ export class UserController{
             }
 
             const access_token = Jwt.jwtSign(payload, user.aud);
-            const refresh_token = Jwt.jwtSignRefreshToken(payload, user.aud);
+            const refresh_token = await Jwt.jwtSignRefreshToken(payload, user.aud);
 
             //send email to user for verification
             res.json({
@@ -359,7 +359,7 @@ export class UserController{
                     type: decoded_data.type
                 };
                 const access_token = Jwt.jwtSign(payload, decoded_data.aud);
-                const refresh_token = Jwt.jwtSignRefreshToken(payload, decoded_data.aud);
+                const refresh_token = await Jwt.jwtSignRefreshToken(payload, decoded_data.aud);
                 res.json({
                     accessToken: access_token,
                     refreshToken: refresh_token
