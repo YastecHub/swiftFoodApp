@@ -44,7 +44,7 @@ export class Jwt{
             }
         );
         //set refresh token in Redis with key userId
-         Redis.setValue(userId.toString(), refreshToken, redis_ex);
+         await Redis.setValue(userId.toString(), refreshToken, redis_ex);
          return refreshToken;
         } catch(e){
             console.log(e);
