@@ -72,4 +72,10 @@ export class Utils{
     static dotenvConfigs() {
         dotenv.config({ path: '.env' });
     }
+
+    // currentDate() {
+    //     return new Date().toLocaleString('en-US', {
+    //         timeZone: 'Africa/Lagos',
+    //     });
+    // }
 }
