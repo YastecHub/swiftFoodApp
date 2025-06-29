@@ -51,6 +51,17 @@ export class OrderController {
         let nextPage = currentPage + 1;
         try {
             const orders_doc_count = await Order.countDocuments({ user_id: user_id });
+            // If no orders found, return empty array
+            if(!orders_doc_count) {
+                return res.json({
+                    orders: [],
+                    perPage,
+                    currentPage,
+                    prevPage,
+                    nextPage: null,
+                    totalPages: 0
+                });
+            }
             const totalPages = Math.ceil(orders_doc_count/perPage);
             if(totalPages == 0 || totalPages == currentPage) {
                 nextPage = null;
