@@ -51,7 +51,7 @@ export class RestaurantValidators{
         return [
             query('lat', 'Latitude is required').isNumeric(),
             query('lng', 'Longitude is required').isNumeric(),
-            query('radius', 'Radius is required').isNumeric()
+            query('radius', 'Radius is required').isNumeric(),
         ];
     }
 
