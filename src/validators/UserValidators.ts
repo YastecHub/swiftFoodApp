@@ -44,8 +44,12 @@ export class UserValidators{
                         email: email,
                     }).then(user => {
                         if (user) {
-                            req.user = user;
-                            return true;             
+                            if (user.type == 'user' || user.type == 'admin') {
+                                req.user = user;
+                                return true;
+                            } else {
+                               throw('You are not an Authorized User');
+                            }            
                         }else {
                             throw('No User Registered with such email, Please Register');
                         }
