@@ -1,5 +1,5 @@
 import * as Bcrypt from 'bcrypt';
-import * as Multer from 'multer';
+import Multer from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';

@@ -1,9 +1,9 @@
-import * as express from 'express';
+import express from 'express';
 import * as mongoose from 'mongoose';
 import * as bodyParser from 'body-parser';
 import { getEnvironmentVariables } from './environments/environment';
 import UserRouter from './routers/UserRouter';
-import * as cors from 'cors';
+import cors from 'cors';
 import BannerRouter from './routers/BannerRouter';
 import CityRouter from './routers/CityRouter';
 import RestaurantRouter from './routers/RestaurantRouter';
