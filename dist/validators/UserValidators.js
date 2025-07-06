@@ -7,6 +7,28 @@ exports.UserValidators = void 0;
 const express_validator_1 = require("express-validator");
 const User_1 = __importDefault(require("../models/User"));
 class UserValidators {
+    static registerUserViaPhone() {
+        return [
+            (0, express_validator_1.query)('phone', 'Phone Number is required').isString()
+                .custom((phone, { req }) => {
+                return User_1.default.findOne({
+                    phone: phone,
+                    type: 'user'
+                }).then(user => {
+                    if (user) {
+                        req.user = user;
+                        // // throw new Error('User Already Exists');
+                        // throw('User Already Exists');
+                    }
+                    else {
+                        return true;
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                });
+            }),
+        ];
+    }
     static signup() {
         return [
             (0, express_validator_1.body)('email', 'Email is required').isEmail()

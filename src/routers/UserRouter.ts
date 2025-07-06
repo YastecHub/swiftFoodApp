@@ -17,7 +17,17 @@ class UserRouter {
        this.deleteRoutes();
     }
 
-    getRoutes(){
+    getRoutes(){ 
+        /**
+         * @swagger
+         * /user/registerUserViaPhone:
+         *   get:
+         *     summary: Register user via phone
+         *     responses:
+         *       200:
+         *         description: User registered successfully.
+         */
+        this.router.get('/registerUserViaPhone', UserValidators.registerUserViaPhone(), GlobalMiddleWare.checkError, UserController.registerUserViaPhone);
         this.router.get('/send/verification/email', GlobalMiddleWare.auth , UserController.resendVerificationEmail);
         this.router.get('/login', UserValidators.login(), GlobalMiddleWare.checkError, UserController.login);
         this.router.get('/send/reset/password/token', UserValidators.checkResetPasswordEmail(), GlobalMiddleWare.checkError, UserController.sendResetPasswordOtp);

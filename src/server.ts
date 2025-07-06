@@ -13,6 +13,7 @@ import AddressRouter from './routers/AddressRouter';
 import OrderRouter from './routers/OrderRouter';
 import { Utils } from './utils/utils';
 import { Redis } from './utils/Redis';
+import { setupSwagger } from './swagger';
 
 export class Server{
 
@@ -31,6 +32,8 @@ export class Server{
         this.connectRedis();
         this.allowCors();
         this.configureBodyParser();
+
+        setupSwagger(this.app);
     }
 
     dotenvConfigs(){
@@ -52,6 +55,7 @@ export class Server{
         this.app.use(bodyParser.urlencoded({
             extended: true
         }));
+        this.app.use(bodyParser.json());
     }
 
     allowCors(){

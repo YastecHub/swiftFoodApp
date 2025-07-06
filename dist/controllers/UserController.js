@@ -19,6 +19,64 @@ const NodeMailer_1 = require("../utils/NodeMailer");
 const Redis_1 = require("../utils/Redis");
 const utils_1 = require("../utils/utils");
 class UserController {
+    static registerUserViaPhone(req, res, next) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const phone = req.query.phone;
+            let user = req.user;
+            const verification_token = utils_1.Utils.generateVerificationToken(4);
+            try {
+                if (!user) {
+                    const data = {
+                        phone,
+                        type: 'user',
+                        status: 'active',
+                        verification_token,
+                        verification_token_time: Date.now() + new utils_1.Utils().MAX_TOKEN_TIME,
+                    };
+                    user = yield new User_1.default(data).save();
+                    if (!user)
+                        throw new Error('User not registered! Please try again.');
+                }
+                else {
+                    user = yield User_1.default.findByIdAndUpdate(user._id, {
+                        verification_token,
+                        verification_token_time: Date.now() + new utils_1.Utils().MAX_TOKEN_TIME,
+                        updated_at: new Date()
+                    }, {
+                        new: true,
+                        projection: {
+                            verification_token: 0,
+                            verification_token_time: 0,
+                            password: 0,
+                            reset_password_token: 0,
+                            reset_password_token_time: 0,
+                            __v: 0,
+                            _id: 0
+                        }
+                    });
+                }
+                // const user_data = {
+                //     email: user.email || null,
+                //     account_verified: user.account_verified,
+                //     phone: user.phone,
+                //     name: user.name || null,
+                //     photo: user.photo || null,
+                //     type: user.type,
+                //     status: user.status,
+                //     created_at: user.created_at,
+                //     updated_at: user.updated_at
+                // };
+                res.json({
+                    success: true,
+                    // user: user_data
+                });
+                // send otp to registered number
+            }
+            catch (e) {
+                next(e);
+            }
+        });
+    }
     static signup(req, res, next) {
         return __awaiter(this, void 0, void 0, function* () {
             console.log('req: ', req);
@@ -45,7 +103,7 @@ class UserController {
                 const user = yield new User_1.default(data).save();
                 const user_data = {
                     email: user.email,
-                    email_verified: user.email_verified,
+                    account_verified: user.account_verified,
                     phone: user.phone,
                     name: user.name,
                     photo: user.photo || null,
@@ -88,7 +146,7 @@ class UserController {
                     verification_token: verification_token,
                     verification_token_time: { $gt: Date.now() }
                 }, {
-                    email_verified: true,
+                    account_verified: true,
                     updated_at: new Date(),
                 }, {
                     new: true,
@@ -160,7 +218,7 @@ class UserController {
                 const refresh_token = yield Jwt_1.Jwt.jwtSignRefreshToken(payload, user._id);
                 const user_data = {
                     email: user.email,
-                    email_verified: user.email_verified,
+                    account_verified: user.account_verified,
                     phone: user.phone,
                     name: user.name,
                     photo: user.photo || null,
@@ -252,7 +310,7 @@ class UserController {
                 if (profile) {
                     const user_data = {
                         email: profile.email,
-                        email_verified: profile.email_verified,
+                        account_verified: profile.account_verified,
                         phone: profile.phone,
                         name: profile.name,
                         photo: profile.photo || null,
@@ -314,7 +372,7 @@ class UserController {
                 const updatedUser = yield User_1.default.findByIdAndUpdate(user.aud, {
                     phone: phone,
                     email: new_email,
-                    email_verified: false,
+                    account_verified: false,
                     verification_token,
                     verification_token_time: Date.now() + new utils_1.Utils().MAX_TOKEN_TIME,
                     updated_at: new Date()

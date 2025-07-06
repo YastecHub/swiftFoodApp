@@ -52,6 +52,7 @@ const AddressRouter_1 = __importDefault(require("./routers/AddressRouter"));
 const OrderRouter_1 = __importDefault(require("./routers/OrderRouter"));
 const utils_1 = require("./utils/utils");
 const Redis_1 = require("./utils/Redis");
+const swagger_1 = require("./swagger");
 class Server {
     constructor() {
         this.app = (0, express_1.default)();
@@ -66,6 +67,7 @@ class Server {
         this.connectRedis();
         this.allowCors();
         this.configureBodyParser();
+        (0, swagger_1.setupSwagger)(this.app);
     }
     dotenvConfigs() {
         utils_1.Utils.dotenvConfigs();
@@ -83,6 +85,7 @@ class Server {
         this.app.use(bodyParser.urlencoded({
             extended: true
         }));
+        this.app.use(bodyParser.json());
     }
     allowCors() {
         this.app.use((0, cors_1.default)());

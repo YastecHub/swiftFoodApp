@@ -2,6 +2,30 @@ import { body, query } from "express-validator";
 import User from "../models/User";
 
 export class UserValidators{
+    
+    static registerUserViaPhone() {
+        return [
+            query('phone', 'Phone Number is required').isString()
+            .custom((phone, {req}) => {
+                return User.findOne({
+                    phone: phone,
+                    type: 'user'
+                }).then(user => {
+                    if (user) {
+                        req.user = user;
+                        // // throw new Error('User Already Exists');
+                        // throw('User Already Exists');
+                    } else {
+                        return true;
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            }),
+        ];
+    }
+
+    
    static signup(){
         return [
             body('email', 'Email is required').isEmail()

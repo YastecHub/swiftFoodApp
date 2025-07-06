@@ -1,4 +1,5 @@
 export declare class UserValidators {
+    static registerUserViaPhone(): import("express-validator").ValidationChain[];
     static signup(): import("express-validator").ValidationChain[];
     static verifyUserEmailToken(): import("express-validator").ValidationChain[];
     static login(): import("express-validator").ValidationChain[];

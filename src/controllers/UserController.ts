@@ -6,6 +6,65 @@ import { Utils } from "../utils/utils";
 
 export class UserController{
 
+    static async registerUserViaPhone(req, res, next) { 
+        const phone = req.query.phone;
+        let user = req.user;
+        const verification_token = Utils.generateVerificationToken(4);
+        try {
+            if(!user) {
+                const data = {
+                    phone,
+                    type: 'user',
+                    status: 'active',
+                    verification_token,
+                    verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
+                };
+                user = await new User(data).save();
+                if(!user) throw new Error('User not registered! Please try again.');
+            } else {
+                user = await User.findByIdAndUpdate(
+                    user._id,
+                    {
+                        verification_token,
+                        verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
+                        updated_at: new Date()
+                    },
+                    { 
+                        new: true,
+                        projection: {
+                            verification_token: 0,
+                            verification_token_time: 0,
+                            password: 0,
+                            reset_password_token: 0,
+                            reset_password_token_time: 0,
+                            __v: 0,
+                            _id: 0
+                        } 
+                    }
+                );
+            }
+            const user_data = {
+                email: user.email || null,
+                account_verified: user.account_verified,
+                phone: user.phone,
+                name: user.name || null,
+                photo: user.photo || null,
+                type: user.type,
+                status: user.status,
+                created_at: user.created_at,
+                updated_at: user.updated_at
+            };
+            res.json({
+                success: true,
+                user: user_data
+            });
+
+            // send otp to registered number
+        } catch(e) {
+            next(e);
+        }
+    }
+
     static async signup(req, res, next) {
         console.log('req: ', req);
         console.log(Utils.generateVerificationToken(6));
@@ -34,7 +93,7 @@ export class UserController{
             const user = await new User(data).save();
             const user_data ={
                 email: user.email,
-                email_verified: user.email_verified,
+                account_verified: user.account_verified,
                 phone: user.phone,
                 name: user.name,
                 photo: user.photo || null,
@@ -80,7 +139,7 @@ export class UserController{
             verification_token_time: {$gt: Date.now()}
         },
         {
-           email_verified: true,
+           account_verified: true,
            updated_at: new Date(),
         },
         {
@@ -152,7 +211,7 @@ export class UserController{
 
             const user_data ={
                 email: user.email,
-                email_verified: user.email_verified,
+                account_verified: user.account_verified,
                 phone: user.phone,
                 name: user.name,      
                 photo: user.photo || null,
@@ -245,7 +304,7 @@ export class UserController{
             if (profile) {
                 const user_data ={
                     email: profile.email,
-                    email_verified: profile.email_verified,
+                    account_verified: profile.account_verified,
                     phone: profile.phone,
                     name: profile.name,
                     photo: profile.photo || null,
@@ -307,7 +366,7 @@ export class UserController{
                 {
                     phone: phone,
                     email: new_email,
-                    email_verified: false,
+                    account_verified: false,
                     verification_token,
                     verification_token_time: Date.now() + new Utils().MAX_TOKEN_TIME,
                     updated_at: new Date()
