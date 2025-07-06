@@ -15,6 +15,55 @@ const options: swaggerJSDoc.Options = {
         url: 'http://localhost:3000/api', // update your server URL & port
       },
     ],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter JWT Bearer token for authorization',
+        },
+      },
+    },
+    security: [
+      {
+        bearerAuth: [],
+      },
+    ],
+    tags: [
+      {
+        name: 'User Module',
+        description: 'Operations related to user authentication and profile management',
+      },
+      {
+        name: 'Banner Module',
+        description: 'Operations related to banners',
+      },
+      {
+        name: 'City Module',
+        description: 'Operations related to cities',
+      },
+      {
+        name: 'Restaurant Module',
+        description: 'Operations related to restaurants',
+      },
+      {
+        name: 'Category Module',
+        description: 'Operations related to categories',
+      },
+      {
+        name: 'Item Module',
+        description: 'Operations related to menu items',
+      },
+      {
+        name: 'Address Module',
+        description: 'Operations related to user addresses',
+      },
+      {
+        name: 'Order Module',
+        description: 'Operations related to orders',
+      },
+    ],
   },
   apis: ['./src/routers/*.ts'], // path to your route files with Swagger comments
 };

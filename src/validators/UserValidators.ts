@@ -74,7 +74,7 @@ export class UserValidators{
                         email: email,
                     }).then(user => {
                         if (user) {
-                            if (user.type == 'user' || user.type == 'admin') {
+                            if (user.type == 'user' || user.type == 'Admin') {
                                 req.user = user;
                                 return true;
                             } else {
