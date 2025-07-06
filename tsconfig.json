@@ -1,26 +1,27 @@
 {
-    "compilerOptions": {
-      "target": "es6",
-      "module": "commonjs",
-      "outDir": "dist",
-      "sourceMap": false,
-      "declaration": true,
-      "lib": [
-        "es2017.object",
-        "es2015",
-        "es2017",
-        "dom"
-      ]
-    },
-    "files": [
-      "./node_modules/@types/node/index.d.ts"
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist",
+    "sourceMap": false,
+    "declaration": true,
+    "lib": [
+      "es2017.object",
+      "es2015",
+      "es2017",
+      "dom"
     ],
-    "include": [
-      "src/**/*.ts",
-      "package.json"
-    ],
-    "exclude": [
-      "node_modules"
-    ]
-  }
-  
+    "esModuleInterop": true,
+    "moduleResolution": "node"
+  },
+  "files": [
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": [
+    "src/**/*.ts",
+    "package.json"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}

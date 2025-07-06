@@ -41,6 +41,17 @@ export class AddressController{
         let nextPage = currentPage + 1;
         try {
             const address_doc_count = await Address.countDocuments({ user_id: user_id });
+            // If no addresses found, return empty array
+            if(!address_doc_count) {
+                return res.json({
+                    addresses: [],
+                    perPage,
+                    currentPage,
+                    prevPage,
+                    nextPage: null,
+                    totalPages: 0
+                });
+            }
             const totalPages = Math.ceil(address_doc_count/perPage);
             if(totalPages == 0 || totalPages == currentPage) {
                 nextPage = null;

@@ -1,5 +1,5 @@
 import * as Bcrypt from 'bcrypt';
-import * as Multer from 'multer';
+import Multer from 'multer';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as dotenv from 'dotenv';
@@ -72,4 +72,10 @@ export class Utils{
     static dotenvConfigs() {
         dotenv.config({ path: '.env' });
     }
+
+    // currentDate() {
+    //     return new Date().toLocaleString('en-US', {
+    //         timeZone: 'Africa/Lagos',
+    //     });
+    // }
 }

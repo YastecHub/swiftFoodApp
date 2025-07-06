@@ -29,6 +29,22 @@ export class GlobalMiddleWare{
         }
     }
 
+        static async decodeRefreshToken(req, res, next){
+            const refreshToken = req.body.refreshToken;
+        try {
+            if (!refreshToken){      
+                req.errorStatus = 403;
+                next( new Error("Access is forbidden! User doesn\'t exist or token is invalid"));
+            } 
+            const decoded = await Jwt.jwtVerifyRefreshToken(refreshToken);
+            req.user = decoded;
+            next();
+        } catch (e) {       
+           req.errorStatus = 403;
+           next( new Error("Your session has expired or you are an invalid user!, please login again...."));
+        }
+    }
+
     static adminRole(req, res, next){
         const user = req.user;
         if (user.type !== 'user') {

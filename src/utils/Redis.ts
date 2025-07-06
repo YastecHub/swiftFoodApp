@@ -1,7 +1,7 @@
 import { createClient } from 'redis';
 import { getEnvironmentVariables } from '../environments/environment';
 
-export const client = createClient(
+const client = createClient(
     {
         // url: 'redis://' + getEnvironmentVariables().redis.host + ':' + getEnvironmentVariables().redis.port,
         username: getEnvironmentVariables().redis.username,

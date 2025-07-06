@@ -44,8 +44,12 @@ export class UserValidators{
                         email: email,
                     }).then(user => {
                         if (user) {
-                            req.user = user;
-                            return true;             
+                            if (user.type == 'user' || user.type == 'admin') {
+                                req.user = user;
+                                return true;
+                            } else {
+                               throw('You are not an Authorized User');
+                            }            
                         }else {
                             throw('No User Registered with such email, Please Register');
                         }
@@ -156,17 +160,30 @@ export class UserValidators{
         ];
     };
 
-    static checkRefreshToken() {
+    // static checkRefreshToken() {
+    //     return [
+    //         body('refreshToken', 'Refresh token is required').isString()
+    //             .custom((refreshToken, {req}) => {
+    //                 if (refreshToken) {
+    //                     return true;
+    //                 } else {
+    //                     req.errorStatus = 403;
+    //                     throw('Acceess is forbidden, Please login again');
+    //                 }
+    //             })
+    //     ];
+    // }
+
+    static userProfilePic(){
         return [
-            body('refreshToken', 'Refresh token is required').isString()
-                .custom((refreshToken, {req}) => {
-                    if (refreshToken) {
-                        return true;
-                    } else {
-                        req.errorStatus = 403;
-                        throw('Acceess is forbidden, Please login again');
-                    }
-                })
+            body('profileImages', 'Profile image is required')
+            .custom((profileImage, {req}) => {
+                if (req.file) {
+                    return true;
+                } else{
+                    throw('File not uploaded');
+                }
+            })
         ];
     }
 }

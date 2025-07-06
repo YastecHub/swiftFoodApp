@@ -2,9 +2,10 @@ import * as jwt from 'jsonwebtoken';
 import { Secret } from 'jsonwebtoken';
 import { getEnvironmentVariables } from "../environments/environment";
 import * as Crypto from 'crypto';
+import { Redis } from './Redis';
 
 export class Jwt{
-    static jwtSign(payload, userId, expires_in: any = '20s') {
+    static jwtSign(payload, userId, expires_in: any = '1h') {
         //Jwt.gen_secret_key();
         return jwt.sign(
             payload,
@@ -27,8 +28,13 @@ export class Jwt{
         })
     }
 
-    static jwtSignRefreshToken(payload, userId, expires_in: any = '180d') {
-        return jwt.sign(
+    static async jwtSignRefreshToken(
+        payload, 
+        userId, 
+        expires_in: any = '1y',
+        redis_ex: number = 365 * 24 * 60 * 60 ){
+        try{
+            const refreshToken = jwt.sign(
             payload,
             getEnvironmentVariables().jwt_refresh_secret_key as Secret,
             { 
@@ -37,14 +43,31 @@ export class Jwt{
                 issuer: 'YastecHub' 
             }
         );
+        //set refresh token in Redis with key userId
+         await Redis.setValue(userId.toString(), refreshToken, redis_ex);
+         return refreshToken;
+        } catch(e){
+            console.log(e);
+            throw('Error signing refresh token.');
+        }
     }
 
-    static jwtVerifyRefreshToken(token: string) : Promise<any>{
+    static jwtVerifyRefreshToken(refreshToken: string) : Promise<any>{
         return new Promise((resolve, reject) => {
-            jwt.verify(token, getEnvironmentVariables().jwt_refresh_secret_key, (err, decoded) => {
+            jwt.verify(refreshToken, getEnvironmentVariables().jwt_refresh_secret_key, (err, decoded) => {
                 if(err) reject(err);
                 else if(!decoded) reject(new Error('User is not Authorized.'));
-                else resolve(decoded);
+                else {
+                    // Check if the refresh token exists in Redis
+                    const user: any = decoded;
+                    Redis.getValue(user.aud).then(value => {
+                        if(value === refreshToken) resolve(decoded);
+                        else reject(new Error('Your Session is Expired! Please Login Again...'));
+                    })
+                    .catch(e => {
+                        reject(e);
+                    })
+                }
             })
         })
     }

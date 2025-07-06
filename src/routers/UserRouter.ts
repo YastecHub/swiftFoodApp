@@ -2,6 +2,7 @@ import {Router} from "express"
 import { UserController } from "../controllers/UserController";
 import { UserValidators } from "../validators/UserValidators";
 import { GlobalMiddleWare } from "../middlewares/GlobalMiddleWare";
+import { Utils } from "../utils/utils";
 
 class UserRouter {
     
@@ -26,7 +27,8 @@ class UserRouter {
 
     postRoutes(){
         this.router.post('/signup', UserValidators.signup() , GlobalMiddleWare.checkError, UserController.signup);     
-        this.router.post('/refresh_token', UserValidators.checkRefreshToken(), GlobalMiddleWare.checkError, UserController.getNewTokens);        
+        this.router.post('/refresh_token',GlobalMiddleWare.decodeRefreshToken, GlobalMiddleWare.checkError, UserController.getNewTokens);        
+        this.router.post('/logout', GlobalMiddleWare.auth, GlobalMiddleWare.decodeRefreshToken, UserController.logout);
     }
 
     patchRoutes(){
@@ -36,7 +38,9 @@ class UserRouter {
       this.router.patch('/update/profile', GlobalMiddleWare.auth,  UserValidators.verifyUserProfile(), GlobalMiddleWare.checkError , UserController.updateUserProfile);
     }
 
-    putRoutes(){}
+    putRoutes(){
+        this.router.put('/updateprofilePic', GlobalMiddleWare.auth,   new Utils().multer.single('profileImages'), UserValidators.userProfilePic(), GlobalMiddleWare.checkError , UserController.updateUserProfilePic);
+    }
 
     deleteRoutes(){}
 }

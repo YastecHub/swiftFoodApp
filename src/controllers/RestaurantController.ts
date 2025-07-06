@@ -86,6 +86,17 @@ export class RestaurantController{
                     }
                 }
             );
+            //send empty array if no restaurants found
+            if(!restaurants_doc_count) {
+                return res.json({
+                    restaurants: [],
+                    perPage,
+                    currentPage,
+                    prevPage,
+                    nextPage: null,
+                    totalPages: 0
+                });
+            }
             const totalPages = Math.ceil(restaurants_doc_count / perPage);
             if(totalPages == 0 || totalPages == currentPage) {
                 nextPage = null;
@@ -163,6 +174,17 @@ export class RestaurantController{
                     }
                 }
             );
+            //send empty array if no restaurants found
+            if(!restaurants_doc_count) {
+                return res.json({
+                    restaurants: [],
+                    perPage,
+                    currentPage,
+                    prevPage,
+                    nextPage: null,
+                    totalPages: 0
+                });
+            }
             const totalPages = Math.ceil(restaurants_doc_count / perPage);
             if(totalPages == 0 || totalPages == currentPage) {
                 nextPage = null;
