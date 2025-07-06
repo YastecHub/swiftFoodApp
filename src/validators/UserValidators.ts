@@ -173,4 +173,17 @@ export class UserValidators{
     //             })
     //     ];
     // }
+
+    static userProfilePic(){
+        return [
+            body('profileImages', 'Profile image is required')
+            .custom((profileImage, {req}) => {
+                if (req.file) {
+                    return true;
+                } else{
+                    throw('File not uploaded');
+                }
+            })
+        ];
+    }
 }

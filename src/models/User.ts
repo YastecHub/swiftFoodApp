@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema({
     verification_token: {type: String,required: true },
     verification_token_time : { type:Date, required: true},
     phone: {type: String, required: true},
+    photo: {type: String, required: true},
     password: {type: String, required: true},
     reset_password_token: {type: String, required: false },
     reset_password_token_time : { type:Date, required: false},
