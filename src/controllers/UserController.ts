@@ -65,6 +65,66 @@ export class UserController{
         }
     }
 
+    static async otpLogin(req, res, next) { 
+        const phone = req.query.phone;
+        const otp = req.query.otp;
+        try {
+            const user = await User.findOneAndUpdate(
+                {
+                    phone,
+                    verification_token: otp,
+                    verification_token_time: {$gt: Date.now()}
+                },
+                { 
+                    account_verified: true,
+                    updated_at: new Date()
+                },
+                {
+                    new: true, 
+                    projection: {
+                        verification_token: 0,
+                        verification_token_time: 0,
+                        password: 0,
+                        reset_password_token: 0,
+                        reset_password_token_time: 0,
+                        __v: 0,
+                        // _id: 0
+                    }
+                }
+            );
+            if(!user) {
+                throw new Error('Wrong Otp or OTP Is Expired! Please try again...');
+            }
+            // filter user data to pass in frontend
+            const user_data = {
+                email: user.email || null,
+                account_verified: user.account_verified,
+                phone: user.phone,
+                name: user.name || null,
+                photo: user.photo || null,
+                type: user.type,
+                status: user.status,
+                created_at: user.created_at,
+                updated_at: user.updated_at
+            };
+            const payload = {
+                // user_id: user._id,
+                // aud: user._id,
+                phone: user.phone,
+                type: user.type
+            };
+            const access_token = Jwt.jwtSign(payload, user._id);
+            const refresh_token = await Jwt.jwtSignRefreshToken(payload, user._id);
+            res.json({
+                token: access_token,
+                refreshToken: refresh_token,
+                user: user_data
+            });
+        } catch(e) {
+            next(e);
+        }
+    }
+
     static async signup(req, res, next) {
         console.log('req: ', req);
         console.log(Utils.generateVerificationToken(6));

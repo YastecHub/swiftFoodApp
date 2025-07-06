@@ -25,8 +25,14 @@ export class UserValidators{
         ];
     }
 
+    static otpLogin() {
+        return [
+            query('phone', 'Phone Number is required').isString(),
+            query('otp', 'OTP is required').isNumeric()
+        ];
+    }
     
-   static signup(){
+    static signup(){
         return [
             body('email', 'Email is required').isEmail()
                 .custom((email, {req}) => {

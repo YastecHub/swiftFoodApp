@@ -27,6 +27,7 @@ class UserRouter {
          *       200:
          *         description: User registered successfully.
          */
+        this.router.get('/otpLogin', UserValidators.otpLogin(), GlobalMiddleWare.checkError, UserController.otpLogin);
         this.router.get('/registerUserViaPhone', UserValidators.registerUserViaPhone(), GlobalMiddleWare.checkError, UserController.registerUserViaPhone);
         this.router.get('/send/verification/email', GlobalMiddleWare.auth , UserController.resendVerificationEmail);
         this.router.get('/login', UserValidators.login(), GlobalMiddleWare.checkError, UserController.login);

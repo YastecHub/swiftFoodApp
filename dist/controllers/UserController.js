@@ -55,20 +55,20 @@ class UserController {
                         }
                     });
                 }
-                // const user_data = {
-                //     email: user.email || null,
-                //     account_verified: user.account_verified,
-                //     phone: user.phone,
-                //     name: user.name || null,
-                //     photo: user.photo || null,
-                //     type: user.type,
-                //     status: user.status,
-                //     created_at: user.created_at,
-                //     updated_at: user.updated_at
-                // };
+                const user_data = {
+                    email: user.email || null,
+                    account_verified: user.account_verified,
+                    phone: user.phone,
+                    name: user.name || null,
+                    photo: user.photo || null,
+                    type: user.type,
+                    status: user.status,
+                    created_at: user.created_at,
+                    updated_at: user.updated_at
+                };
                 res.json({
                     success: true,
-                    // user: user_data
+                    user: user_data
                 });
                 // send otp to registered number
             }
