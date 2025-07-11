@@ -58,7 +58,6 @@ export class UserController{
                 success: true,
                 user: user_data
             });
-
             // send otp to registered number
         } catch(e) {
             next(e);
@@ -403,6 +402,41 @@ export class UserController{
                 }
             );
             res.send(userData);
+        } catch (e) {
+            next(e)
+        }
+    }
+    
+    static async updateCustomerProfile(req, res, next){
+        const user = req.user;
+        const name = req.body.name;
+        const email = req.body.email;
+        try {
+            const userData = await User.findById(user.aud);
+            if(!userData) throw new Error('User doesn\`t exist');
+            const updatedUser = await User.findByIdAndUpdate(
+                user.aud,
+                {
+                    name: name,
+                    email: email,
+                    updated_at: new Date()
+                },
+                { 
+                    new: true,
+                    projection: {
+                        verification_token: 0,
+                        verification_token_time: 0,
+                        password: 0,
+                        reset_password_token: 0,
+                        reset_password_token_time: 0,
+                        __v: 0,
+                        _id: 0
+                    }
+                }
+            );
+            res.json({
+                user: updatedUser
+            });
         } catch (e) {
             next(e)
         }

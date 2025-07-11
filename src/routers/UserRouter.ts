@@ -266,7 +266,7 @@ class UserRouter {
      */
     this.router.patch('/update/phoneNumber', GlobalMiddleWare.auth, UserValidators.verifyPhoneNumber(), GlobalMiddleWare.checkError, UserController.updatePhoneNumber);
 
-    /**
+     /**
      * @swagger
      * /user/update/profile:
      *   patch:
@@ -289,6 +289,30 @@ class UserRouter {
      *         description: Profile updated
      */
     this.router.patch('/update/profile', GlobalMiddleWare.auth, UserValidators.verifyUserProfile(), GlobalMiddleWare.checkError, UserController.updateUserProfile);
+
+
+    /**
+     * @swagger
+     * /user/update/customerP rofile:
+     *   patch:
+     *     tags: [User Module]
+     *     summary: Update Customer profile
+     *     security:
+     *       - bearerAuth: []
+     *     requestBody:
+     *       required: true
+     *       content:
+     *         application/json:
+     *           schema:
+     *             type: object
+     *             properties:
+     *               name: { type: string }
+     *               email: { type: string }
+     *     responses:
+     *       200:
+     *         description: Customer Profile updated
+     */
+    this.router.patch('/update/customerProfile', GlobalMiddleWare.auth, UserValidators.verifyCustomerProfile(), GlobalMiddleWare.checkError, UserController.updateCustomerProfile);
   }
 
   putRoutes() {

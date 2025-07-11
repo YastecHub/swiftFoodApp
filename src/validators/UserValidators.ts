@@ -190,6 +190,28 @@ export class UserValidators{
         ];
     };
 
+    static verifyCustomerProfile(){
+        return[
+            body('name', 'Name is required').isString(),
+            body('email', 'Email is required').isEmail()
+            .custom((email, {req}) => {
+                return User.findOne({
+                    email: email,
+                    type: 'user'
+                }).then(user => {
+                    if (user) {
+                        throw('User with email already exist, Please provide a unique email Id');
+       
+                    }else {  
+                        return true;      
+                    }
+                }).catch(e => {
+                    throw new Error(e);
+                })
+            })
+        ];
+    };
+
     // static checkRefreshToken() {
     //     return [
     //         body('refreshToken', 'Refresh token is required').isString()
