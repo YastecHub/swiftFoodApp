@@ -4,10 +4,24 @@ export class CategoryController{
 
     static async getCategoriesByRestaurant(req, res, next){
         try {
-            const restaurant_id = req.params.restaurantId;
-            const categories = await Category.find({ restaurant_id: restaurant_id }, { __v: 0 });
-            //.populate('restaurant_id').exec()
+            const categories = await Category.find({}, { __v: 0 });
             res.send(categories);
+        } catch (e) {
+            next(e);
+        }
+    }
+
+    static async addCategory(req, res, next){
+        const name = req.body.name;
+        const status = req.body.status || true;
+        try {
+            let data: any = {
+                name,
+                status
+            }
+            if(req.file) data = { ...data, photo: req.file.path };
+            const category = await new Category(data).save();
+            res.send(category);
         } catch (e) {
             next(e);
         }
